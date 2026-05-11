@@ -1,6 +1,6 @@
 # Butik Pastane ve Menü Yönetim Sistemi
 
-Bu proje, Sistem Analizi ve Tasarımı dersi kapsamında geliştirilmiş web tabanlı bir CRUD uygulamasıdır[cite: 4]. Bir butik pastanenin ürün envanterini, fiyatlandırmasını ve kategorilerini dijital ortamda yönetmesini sağlar.
+Bu proje, Sistem Analizi ve Tasarımı dersi kapsamında geliştirilmiş web tabanlı bir CRUD uygulamasıdır. Bir butik pastanenin ürün envanterini, fiyatlandırmasını ve kategorilerini dijital ortamda yönetmesini sağlar.
 
 ## Kullanılan Teknolojiler
 
