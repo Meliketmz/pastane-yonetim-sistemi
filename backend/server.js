@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
-const db = require("./config/db"); // Veritabanı bağlantımızı ekledik
+const db = require("./config/db");
+const urunRoutes = require("./routes/urunRoutes"); // Rotaları içe aktardık
 
 const app = express();
 const PORT = 3000;
@@ -9,10 +10,8 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
-// Temel Test Route'u
-app.get("/api", (req, res) => {
-  res.json({ mesaj: "Butik Pastane API'sine Hosgeldiniz!" });
-});
+// API Rotalarını Kullan
+app.use("/api/urunler", urunRoutes);
 
 // Sunucuyu Başlat
 app.listen(PORT, () => {
