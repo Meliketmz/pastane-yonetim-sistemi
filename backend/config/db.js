@@ -32,4 +32,16 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
+// Ürünler tablosunu oluştur (Eğer yoksa)
+const createTableQuery = `
+            CREATE TABLE IF NOT EXISTS urunler (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                ad TEXT NOT NULL,
+                kategori TEXT NOT NULL,
+                fiyat REAL NOT NULL,
+                stokDurumu BOOLEAN DEFAULT 1,
+                aktif_mi BOOLEAN DEFAULT 1
+            )
+        `;
+
 module.exports = db;
