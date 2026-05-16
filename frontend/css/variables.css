@@ -1,0 +1,13 @@
+:root {
+  /* Soft & Feminine Green and Pink Color Palette */
+  --mist: #f4f3f1; /* Açık, ferah arka plan rengimiz */
+  --peony: #f2d1d4; /* Yumuşak pembe, kenarlıklar ve vurgular için */
+  --mauve: #d8959b; /* Koyu pembe, logo, ikonlar ve aktif durumlar için */
+  --sage: #829672; /* Açık yeşil, başarı ve ikincil butonlar için */
+  --evergreen: #344c3d; /* Koyu yeşil, tüm metinler (siyah yerine) için */
+
+  --white: #ffffff;
+  --sidebar-width: 280px; /* Sol menünün genişliği */
+  --radius-md: 12px;
+  --radius-lg: 20px;
+}

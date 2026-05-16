@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sisteme Giriş - Elif'in Pastanesi</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/variables.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+      }
+
+      body {
+        background-color: var(--mist);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .login-card {
+        background-color: var(--white);
+        width: 100%;
+        max-width: 420px;
+        padding: 50px 40px;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--peony);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+        text-align: center;
+      }
+
+      .logo-icon {
+        font-size: 48px;
+        color: var(--mauve);
+        margin-bottom: 15px;
+      }
+
+      h2 {
+        color: var(--evergreen);
+        font-size: 24px;
+        margin-bottom: 5px;
+      }
+
+      p {
+        color: var(--sage);
+        font-size: 14px;
+        margin-bottom: 30px;
+      }
+
+      .input-group {
+        position: relative;
+        margin-bottom: 20px;
+        text-align: left;
+      }
+
+      .input-group i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--mauve);
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 15px 15px 15px 45px;
+        border: 2px solid var(--mist);
+        border-radius: var(--radius-md);
+        outline: none;
+        background-color: var(--mist);
+        color: var(--evergreen);
+        font-size: 15px;
+        transition: all 0.3s ease;
+      }
+
+      .input-group input:focus {
+        border-color: var(--mauve);
+        background-color: var(--white);
+      }
+
+      .btn-login {
+        width: 100%;
+        padding: 15px;
+        background-color: var(--sage);
+        color: var(--white);
+        border: none;
+        border-radius: var(--radius-md);
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 10px;
+      }
+
+      .btn-login:hover {
+        background-color: var(--evergreen);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-card">
+      <i class="fas fa-birthday-cake logo-icon"></i>
+      <h2>Yönetim Paneli</h2>
+      <p>Sisteme erişmek için bilgilerinizi girin</p>
+
+      <form id="loginForm">
+        <div class="input-group">
+          <i class="fas fa-envelope"></i>
+          <input
+            type="email"
+            id="email"
+            placeholder="E-posta adresiniz"
+            required
+            value="elif@pastane.com"
+          />
+        </div>
+
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input
+            type="password"
+            id="password"
+            placeholder="Şifreniz"
+            required
+            value="123456"
+          />
+        </div>
+
+        <button type="submit" class="btn-login">
+          Giriş Yap <i class="fas fa-arrow-right" style="margin-left: 5px"></i>
+        </button>
+      </form>
+    </div>
+
+    <script>
+      // Giriş yap butonuna basıldığında index.html'e (Yönetim paneline) yönlendir
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          // Şifre kontrolü vs backend'e eklenebilir, şimdilik direkt panele alıyoruz
+          window.location.href = "index.html";
+        });
+    </script>
+  </body>
+</html>
