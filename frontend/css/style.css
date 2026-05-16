@@ -316,6 +316,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain; /* Resmin TAMAMI kırpılmadan ekranda görünür */
+  mix-blend-mode: multiply; /* Beyaz arkaplanı transparan yapıp zeminle kaynaştırır */
 }
 
 .stok-badge {
