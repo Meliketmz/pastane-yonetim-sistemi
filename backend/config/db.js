@@ -11,14 +11,16 @@ const db = new sqlite3.Database(dbPath, (err) => {
   } else {
     console.log("SQLite veritabanına başarıyla bağlanıldı.");
 
-    // Ürünler tablosunu oluştur (Eğer yoksa)
+    // Ürünler tablosunu oluştur (Eğer yoksa) - resim_url ve aktif_mi eklendi
     const createTableQuery = `
             CREATE TABLE IF NOT EXISTS urunler (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 ad TEXT NOT NULL,
                 kategori TEXT NOT NULL,
                 fiyat REAL NOT NULL,
-                stokDurumu BOOLEAN DEFAULT 1
+                resim_url TEXT,
+                stokDurumu BOOLEAN DEFAULT 1,
+                aktif_mi BOOLEAN DEFAULT 1
             )
         `;
 
@@ -31,17 +33,5 @@ const db = new sqlite3.Database(dbPath, (err) => {
     });
   }
 });
-
-// Ürünler tablosunu oluştur (Eğer yoksa)
-const createTableQuery = `
-            CREATE TABLE IF NOT EXISTS urunler (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                ad TEXT NOT NULL,
-                kategori TEXT NOT NULL,
-                fiyat REAL NOT NULL,
-                stokDurumu BOOLEAN DEFAULT 1,
-                aktif_mi BOOLEAN DEFAULT 1
-            )
-        `;
 
 module.exports = db;

@@ -13,9 +13,14 @@ const getUrunler = async (req, res) => {
 // Yeni ürün ekle
 const createUrun = async (req, res) => {
   try {
-    // Dikkat: Boş veri kontrollerini artık Middleware kapıda hallettiği için
-    // burada sadece gelen temiz veriyi Service'e gönderiyoruz!
-    const yeniUrun = await urunService.ekle(req.body);
+    const data = req.body;
+
+    // Eğer formdan bir resim dosyası geldiyse, yolunu veritabanına kaydetmek için ekle
+    if (req.file) {
+      data.resim_url = `/uploads/${req.file.filename}`;
+    }
+
+    const yeniUrun = await urunService.ekle(data);
     res.status(201).json({ mesaj: "Ürün başarıyla eklendi.", urun: yeniUrun });
   } catch (error) {
     res.status(500).json({ hata: error.message });
@@ -26,7 +31,14 @@ const createUrun = async (req, res) => {
 const updateUrun = async (req, res) => {
   try {
     const { id } = req.params;
-    await urunService.guncelle(id, req.body);
+    const data = req.body;
+
+    // Güncelleme sırasında yeni bir resim yüklendiyse, onu da ekle
+    if (req.file) {
+      data.resim_url = `/uploads/${req.file.filename}`;
+    }
+
+    await urunService.guncelle(id, data);
     res.status(200).json({ mesaj: "Ürün bilgileri başarıyla güncellendi." });
   } catch (error) {
     if (error.message.includes("bulunamadı")) {

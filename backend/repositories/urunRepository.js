@@ -11,26 +11,37 @@ class UrunRepository {
     });
   }
 
-  // Yeni ürün ekle
+  // Yeni ürün ekle (resim_url dahil edildi)
   create(urun) {
     return new Promise((resolve, reject) => {
       const query =
-        "INSERT INTO urunler (ad, kategori, fiyat) VALUES (?, ?, ?)";
-      db.run(query, [urun.ad, urun.kategori, urun.fiyat], function (err) {
-        if (err) reject(err);
-        resolve({ id: this.lastID, ...urun });
-      });
+        "INSERT INTO urunler (ad, kategori, fiyat, resim_url) VALUES (?, ?, ?, ?)";
+      db.run(
+        query,
+        [urun.ad, urun.kategori, urun.fiyat, urun.resim_url || null],
+        function (err) {
+          if (err) reject(err);
+          resolve({ id: this.lastID, ...urun });
+        },
+      );
     });
   }
 
-  // Ürün Güncelle
+  // Ürün Güncelle (COALESCE: Eğer yeni resim yoksa eski resmi korur)
   update(id, urun) {
     return new Promise((resolve, reject) => {
       const query =
-        "UPDATE urunler SET ad = ?, kategori = ?, fiyat = ?, stokDurumu = ? WHERE id = ?";
+        "UPDATE urunler SET ad = ?, kategori = ?, fiyat = ?, stokDurumu = ?, resim_url = COALESCE(?, resim_url) WHERE id = ?";
       db.run(
         query,
-        [urun.ad, urun.kategori, urun.fiyat, urun.stokDurumu, id],
+        [
+          urun.ad,
+          urun.kategori,
+          urun.fiyat,
+          urun.stokDurumu,
+          urun.resim_url || null,
+          id,
+        ],
         function (err) {
           if (err) reject(err);
           resolve(this.changes); // Etkilenen satır sayısını döner

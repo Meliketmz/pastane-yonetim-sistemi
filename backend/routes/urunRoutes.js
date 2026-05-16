@@ -5,13 +5,28 @@ const {
   validateRequest,
   urunValidation,
 } = require("../middlewares/validationMiddleware");
+const upload = require("../middlewares/uploadMiddleware"); // Resim yükleme görevlimiz
 
-// CRUD Rotalarımız - GET ve DELETE işlemlerinde gövde (body) verisi olmadığı için validation gerekmez
+// Sadece ürünleri listeleme ve silme (Gövde verisi yok)
 router.get("/", urunController.getUrunler);
-
-// POST ve PUT işlemlerinde önce 'urunValidation' kuralları, sonra 'validateRequest' hata kontrolü, en son Controller çalışır
-router.post("/", urunValidation, validateRequest, urunController.createUrun);
-router.put("/:id", urunValidation, validateRequest, urunController.updateUrun);
 router.delete("/:id", urunController.deleteUrun);
+
+// POST: Önce 'resim' alanındaki dosyayı al -> Sonra verileri doğrula -> Hata yoksa Controller'a git
+router.post(
+  "/",
+  upload.single("resim"),
+  urunValidation,
+  validateRequest,
+  urunController.createUrun,
+);
+
+// PUT: Güncelleme sırasında da aynı sıralama geçerli
+router.put(
+  "/:id",
+  upload.single("resim"),
+  urunValidation,
+  validateRequest,
+  urunController.updateUrun,
+);
 
 module.exports = router;
