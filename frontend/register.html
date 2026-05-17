@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Melike & Elif Pastanesi - Üye Ol</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --peony: #f7edee; /* Soft Pembe */
+        --mauve: #d8959b; /* Gül Kurusu */
+        --evergreen: #5c705a; /* Koyu Yeşil */
+        --white: #ffffff;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+        /* Arka Plan: Soft pembe ve yeşil Mesh Gradient (Devam ettik) */
+        background-color: var(--peony);
+        background-image:
+          radial-gradient(
+            circle at 10% 20%,
+            rgba(216, 149, 155, 0.3),
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at 90% 80%,
+            rgba(92, 112, 90, 0.2),
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at 50% 50%,
+            rgba(255, 255, 255, 0.5),
+            transparent 50%
+          );
+        overflow: hidden;
+      }
+
+      /* Giriş Kartı */
+      .register-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+
+        /* DÜZELTİLDİ: Logonun kapladığı üst boşluğu simetrik 40px yaptık */
+        padding: 40px 45px;
+
+        border-radius: 30px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 450px;
+        text-align: center;
+        position: relative;
+        margin: 20px;
+      }
+
+      /* LOGO VE WRAPPER BÖLÜMÜNÜ SİLDİK */
+
+      .register-title {
+        color: var(--evergreen);
+        font-size: 28px;
+        font-weight: 800;
+        margin-bottom: 5px;
+
+        /* DÜZELTİLDİ: Logo gidince başlığı en tepeye yasladık */
+        margin-top: 0;
+
+        letter-spacing: -0.5px;
+      }
+
+      .register-subtitle {
+        color: #666;
+        font-size: 15px;
+        margin-bottom: 40px; /* Form ile arasındaki boşluk */
+      }
+
+      /* Form Girişleri */
+      .input-group {
+        position: relative;
+        margin-bottom: 15px;
+      }
+
+      .register-input {
+        width: 100%;
+        padding: 16px 20px 16px 55px;
+        border: 2px solid transparent;
+        border-radius: 16px;
+        background-color: rgba(247, 237, 238, 0.8);
+        color: var(--mauve);
+        font-size: 15px;
+        font-weight: 600;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+      }
+
+      .register-input:focus {
+        outline: none;
+        border-color: var(--mauve);
+        background-color: var(--white);
+        box-shadow: 0 0 15px rgba(216, 149, 155, 0.2);
+      }
+
+      .input-group .icon-left {
+        position: absolute;
+        left: 22px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--mauve);
+        font-size: 16px;
+      }
+
+      /* Buton */
+      .btn-register {
+        width: 100%;
+        padding: 16px;
+
+        /* Kayıt ol butonunu Koyu Yeşil yaparak farklılaştırdık */
+        background-color: var(--evergreen);
+
+        color: var(--white);
+        border: none;
+        border-radius: 16px;
+        font-size: 17px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 15px;
+        box-shadow: 0 8px 25px rgba(92, 112, 90, 0.3);
+      }
+
+      .btn-register:hover {
+        background-color: #4a5c48;
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(92, 112, 90, 0.5);
+      }
+
+      .login-link {
+        margin-top: 25px;
+        font-size: 14px;
+        color: #666;
+      }
+
+      .login-link a {
+        color: var(--mauve);
+        font-weight: bold;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .login-link a:hover {
+        color: var(--evergreen);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register-card">
+      <h2 class="register-title">Aramıza Katılın</h2>
+      <p class="register-subtitle">
+        Melike & Elif Pastanesi yönetim paneline erişmek için bir hesap
+        oluşturun.
+      </p>
+
+      <form action="login.html" method="GET">
+        <div class="input-group">
+          <i class="fas fa-user icon-left"></i>
+          <input
+            type="text"
+            class="register-input"
+            required
+            placeholder="Adınız Soyadınız"
+          />
+        </div>
+
+        <div class="input-group">
+          <i class="fas fa-envelope icon-left"></i>
+          <input
+            type="email"
+            class="register-input"
+            required
+            placeholder="E-posta Adresi"
+          />
+        </div>
+
+        <div class="input-group">
+          <i class="fas fa-lock icon-left"></i>
+          <input
+            type="password"
+            class="register-input"
+            required
+            placeholder="Şifre Belirleyin"
+          />
+        </div>
+
+        <button type="submit" class="btn-register">Hemen Üye Ol</button>
+      </form>
+
+      <div class="login-link">
+        Zaten hesabınız var mı? <a href="login.html">Giriş Yap</a>
+      </div>
+    </div>
+  </body>
+</html>

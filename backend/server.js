@@ -4,6 +4,7 @@ const path = require("path");
 const swaggerUi = require("swagger-ui-express");
 const db = require("./config/db");
 const urunRoutes = require("./routes/urunRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 const PORT = 3000;
@@ -64,10 +65,11 @@ app.use(cors());
 app.use(express.json());
 
 // Resimleri dış dünyaya (Frontend'e) açıyoruz
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // API Rotalarını Kullan
 app.use("/api/urunler", urunRoutes);
+app.use("/api/auth", authRoutes);
 
 // Sunucuyu Başlat
 app.listen(PORT, () => {

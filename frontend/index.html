@@ -3,26 +3,51 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Elif'in Butik Pastanesi - Yönetim Paneli</title>
+    <title>Melike & Elif Pastanesi - Yönetim Paneli</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
     <link rel="stylesheet" href="css/variables.css" />
     <link rel="stylesheet" href="css/style.css" />
+    <style>
+      #btn-logout {
+        background: transparent;
+        border: 2px solid var(--mauve);
+        color: var(--mauve);
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: 20px;
+      }
+      #btn-logout:hover {
+        background-color: var(--mauve);
+        color: var(--white);
+        box-shadow: 0 4px 10px rgba(133, 91, 101, 0.2);
+      }
+    </style>
   </head>
   <body>
     <aside class="sidebar">
       <div class="logo-container">
-        <div class="logo">🍰 Elif'in Pastanesi</div>
+        <div class="logo">🍰 Melike & Elif</div>
       </div>
 
       <div class="menu-group-title">Yönetim Paneli</div>
       <div class="menu-item active" data-target="ozet-sayfasi">
         <i class="fas fa-chart-pie"></i> Özet Panel
       </div>
-      <div class="menu-item" data-target="liste-sayfasi">
-        <i class="fas fa-layer-group"></i> Tüm Lezzetler
+      <div class="menu-item" id="menu-yiyecek" data-target="liste-sayfasi">
+        <i class="fas fa-utensils"></i> Yiyecek Menüsü
+      </div>
+      <div class="menu-item" id="menu-icecek" data-target="liste-sayfasi">
+        <i class="fas fa-mug-hot"></i> İçecek Menüsü
       </div>
 
       <div class="menu-group-title">İşlemler</div>
@@ -38,14 +63,18 @@
 
     <main class="main-area">
       <header class="top-header">
-        <div class="user-profile">
+        <div class="user-profile" style="display: flex; align-items: center">
           <i
             class="fas fa-user-circle"
-            style="font-size: 24px; color: var(--mauve)"
+            style="font-size: 24px; color: var(--mauve); margin-right: 10px"
           ></i>
-          Hoş geldin, Elif
 
-          <button id="btn-logout" class="btn-logout">
+          Hoş geldin,
+          <span id="lbl-aktif-user" style="font-weight: 700; margin-left: 3px"
+            >Elif</span
+          >
+
+          <button id="btn-logout">
             <i class="fas fa-sign-out-alt"></i> Çıkış Yap
           </button>
         </div>
@@ -53,31 +82,94 @@
 
       <div class="content-container">
         <section id="ozet-sayfasi" class="page-section active">
-          <h2 class="page-title">
+          <div class="welcome-banner">
+            <div class="banner-content">
+              <h3>Harika Lezzetler Yaratma Vakti!</h3>
+              <p>
+                Melike & Elif Kardeşlikten Doğan Lezzetler yönetim paneline hoş
+                geldin. Bugün vitrinini hangi eşsiz tatlarla süslemek istersin?
+              </p>
+            </div>
+          </div>
+
+          <h2 class="page-title" style="font-size: 20px; margin-bottom: 20px">
             <i class="fas fa-chart-pie"></i> Sistem Özeti
           </h2>
+
           <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-title">Toplam Çeşit</div>
+            <div
+              class="stat-card"
+              id="kard-toplam"
+              style="border-left: 5px solid var(--evergreen)"
+            >
+              <div class="stat-title" style="color: var(--evergreen)">
+                Toplam Çeşit
+              </div>
               <div class="stat-value" id="stat-toplam">0</div>
             </div>
-            <div class="stat-card" style="border-left: 5px solid var(--sage)">
+            <div
+              class="stat-card"
+              id="kard-stok"
+              style="border-left: 5px solid var(--sage)"
+            >
               <div class="stat-title" style="color: var(--sage)">
                 Stoktaki Lezzetler
               </div>
               <div class="stat-value" id="stat-stok">0</div>
             </div>
-            <div class="stat-card" style="border-left: 5px solid var(--mauve)">
-              <div class="stat-title">Kategori Sayısı</div>
+            <div
+              class="stat-card"
+              id="kard-tukenmis"
+              style="border-left: 5px solid #d6727e"
+            >
+              <div class="stat-title" style="color: #d6727e">
+                Tükenen Lezzetler
+              </div>
+              <div class="stat-value" id="stat-tukenmis">0</div>
+            </div>
+            <div
+              class="stat-card"
+              id="kard-kategori"
+              style="border-left: 5px solid var(--mauve)"
+            >
+              <div class="stat-title" style="color: var(--mauve)">
+                Kategori Sayısı
+              </div>
               <div class="stat-value" id="stat-kategori">0</div>
             </div>
           </div>
         </section>
 
         <section id="liste-sayfasi" class="page-section">
-          <h2 class="page-title">
-            <i class="fas fa-layer-group"></i> Menüdeki Tüm Lezzetler
-          </h2>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              width: 100%;
+              margin-bottom: 30px;
+              padding-bottom: 15px;
+              border-bottom: 1px solid var(--peony);
+            "
+          >
+            <h2 class="page-title" id="liste-baslik" style="margin-bottom: 0">
+              <i class="fas fa-layer-group"></i> Menüdeki Tüm Lezzetler
+            </h2>
+            <button
+              id="btn-geri"
+              class="btn-confirm"
+              style="
+                display: none;
+                flex: none;
+                width: auto;
+                padding: 10px 25px;
+                box-shadow: 0 4px 10px rgba(216, 149, 155, 0.3);
+              "
+            >
+              <i class="fas fa-arrow-left" style="margin-right: 5px"></i> Tümüne
+              Dön
+            </button>
+          </div>
           <div
             id="urunler-grid"
             style="
@@ -135,16 +227,44 @@
                     required
                   >
                     <option value="">Seçiniz...</option>
-                    <option value="Pasta">Pasta</option>
-                    <option value="Özel Gün Pastası">Özel Gün & Tasarım</option>
-                    <option value="Sütlü Tatlı">Sütlü Tatlılar</option>
-                    <option value="Şerbetli Tatlı">Şerbetli Tatlılar</option>
-                    <option value="Kurabiye">Tuzlu / Kurabiye</option>
-                    <option value="Çikolata/Makaron">Çikolata & Makaron</option>
-                    <option value="Fit/Glutensiz">
-                      Fit / Glutensiz Ürünler
-                    </option>
-                    <option value="İçecek">İçecek</option>
+                    <optgroup label="☕ İÇECEKLER">
+                      <option value="Sıcak Kahveler">Sıcak Kahveler</option>
+                      <option value="Soğuk Kahveler">Soğuk Kahveler</option>
+                      <option value="Çaylar">Çaylar</option>
+                      <option value="Soğuk İçecekler">Soğuk İçecekler</option>
+                      <option value="Gazlı İçecekler">Gazlı İçecekler</option>
+                      <option value="Şişe / Hazır İçecekler">
+                        Şişe / Hazır İçecekler
+                      </option>
+                    </optgroup>
+                    <optgroup label="🍰 TATLILAR">
+                      <option value="Pasta">Pasta</option>
+                      <option value="Cheesecake">Cheesecake</option>
+                      <option value="Sütlü Tatlılar">Sütlü Tatlılar</option>
+                      <option value="Çikolatalı Tatlılar">
+                        Çikolatalı Tatlılar
+                      </option>
+                      <option value="Dünya Tatlıları">Dünya Tatlıları</option>
+                    </optgroup>
+                    <optgroup label="🍪 KURABİYELER & ATIŞTIRMALIKLAR">
+                      <option value="Tatlı Kurabiyeler">
+                        Tatlı Kurabiyeler
+                      </option>
+                      <option value="Tuzlu Kurabiyeler">
+                        Tuzlu Kurabiyeler
+                      </option>
+                    </optgroup>
+                    <optgroup label="🥐 FIRIN & UNLU MAMULLER">
+                      <option value="Kruvasanlar">Kruvasanlar</option>
+                      <option value="Poğaça & Açma">Poğaça & Açma</option>
+                      <option value="Sandviçler">Sandviçler</option>
+                    </optgroup>
+                    <optgroup label="🌱 ÖZEL ÜRÜNLER">
+                      <option value="Vegan">Vegan</option>
+                      <option value="Glutensiz">Glutensiz</option>
+                      <option value="Şekersiz">Şekersiz</option>
+                      <option value="Protein Ürünleri">Protein Ürünleri</option>
+                    </optgroup>
                   </select>
                 </div>
 
@@ -174,8 +294,33 @@
                   </select>
                 </div>
 
-                <div class="form-group full">
-                  <button type="submit" id="btn-form-kaydet" class="btn-submit">
+                <div class="form-group full" style="display: flex; gap: 15px">
+                  <button
+                    type="button"
+                    id="btn-form-iptal"
+                    class="btn-cancel"
+                    style="
+                      display: none;
+                      flex: 1;
+                      background-color: var(--white);
+                      color: var(--mauve);
+                      border: 2px solid var(--mauve);
+                      border-radius: var(--radius-md);
+                      font-weight: 800;
+                      font-size: 16px;
+                      transition: all 0.3s;
+                      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+                    "
+                  >
+                    <i class="fas fa-undo-alt" style="margin-right: 8px"></i>
+                    Düzenlemeyi İptal Et
+                  </button>
+                  <button
+                    type="submit"
+                    id="btn-form-kaydet"
+                    class="btn-submit"
+                    style="flex: 2"
+                  >
                     <i class="fas fa-save"></i> Menüye Ekle ve Kaydet
                   </button>
                 </div>
@@ -235,12 +380,71 @@
       </div>
     </div>
 
+    <div id="success-modal" class="custom-modal">
+      <div
+        class="modal-box"
+        style="text-align: center; border-top: 5px solid var(--sage)"
+      >
+        <i
+          class="fas fa-check-circle"
+          style="color: var(--sage); font-size: 50px; margin-bottom: 15px"
+        ></i>
+        <h3 style="color: var(--sage); margin-bottom: 10px">İşlem Başarılı!</h3>
+        <p id="success-message" style="margin-bottom: 20px">
+          Lezzet bilgileri güncellendi.
+        </p>
+        <div class="modal-actions" style="justify-content: center">
+          <button
+            type="button"
+            id="btn-success-ok"
+            class="btn-submit"
+            style="
+              background-color: var(--sage);
+              width: auto;
+              padding: 10px 40px;
+            "
+          >
+            Tamam
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="logout-modal" class="custom-modal">
+      <div
+        class="modal-box"
+        style="text-align: center; border-top: 5px solid var(--mauve)"
+      >
+        <i
+          class="fas fa-sign-out-alt"
+          style="color: var(--mauve); font-size: 50px; margin-bottom: 15px"
+        ></i>
+        <h3 style="color: var(--mauve); margin-bottom: 10px">
+          Çıkış Yapmak Üzeresiniz
+        </h3>
+        <p style="margin-bottom: 20px">
+          Panelden güvenli bir şekilde çıkış yapmak istediğinize emin misiniz?
+        </p>
+        <div class="modal-actions" style="justify-content: center; gap: 15px">
+          <button id="btn-cancel-logout" class="btn-cancel" style="flex: 1">
+            Vazgeç
+          </button>
+          <button
+            id="btn-confirm-logout"
+            class="btn-submit"
+            style="flex: 1; background-color: var(--mauve)"
+          >
+            Evet, Çıkış Yap
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="js/services/api.js"></script>
     <script src="js/utils/notification.js"></script>
     <script src="js/views/urunlerView.js"></script>
     <script src="js/app.js"></script>
     <script>
-      // Menü tıklama mantığı (Görsel geçişler)
       const menuItems = document.querySelectorAll(".menu-item");
       const pageSections = document.querySelectorAll(".page-section");
 

@@ -1,45 +1,61 @@
-const API_URL = "http://localhost:3000/api/urunler";
-
 const apiService = {
-  // Tüm ürünleri listeleme (GET)
+  // 1. Tüm Ürünleri Getirme Fonksiyonu
   async urunleriGetir() {
-    const response = await fetch(API_URL);
-    if (!response.ok) throw new Error("Ürünler getirilirken bir hata oluştu.");
-    return await response.json();
+    const res = await fetch("http://localhost:3000/api/urunler");
+    if (!res.ok) throw new Error("Ürünler getirilemedi.");
+    return await res.json();
   },
 
-  // Yeni ürün ekleme (POST - Resimli form verisi olduğu için FormData kullanıyoruz)
+  // 2. Yeni Ürün Ekleme Fonksiyonu
   async urunEkle(formData) {
-    const response = await fetch(API_URL, {
+    const res = await fetch("http://localhost:3000/api/urunler", {
       method: "POST",
-      body: formData, // Başlık (Content-Type) eklemiyoruz, tarayıcı FormData görünce otomatik ayarlar
+      body: formData, // FormData gönderildiği için tarayıcı Content-Type'ı otomatik ayarlar
     });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.mesaj || "Ürün eklenemedi.");
-    return result;
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.hata || "Ürün eklenemedi.");
+    }
+    return await res.json();
   },
 
-  // Ürün güncelleme (PUT)
+  // 3. Ürün Güncelleme Fonksiyonu
   async urunGuncelle(id, formData) {
-    const response = await fetch(`${API_URL}/${id}`, {
+    const res = await fetch(`http://localhost:3000/api/urunler/${id}`, {
       method: "PUT",
       body: formData,
     });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.mesaj || "Ürün güncellenemedi.");
-    return result;
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.hata || "Ürün güncellenemedi.");
+    }
+    return await res.json();
   },
 
-  // Ürün silme (DELETE - Arka planda Soft Delete çalışacak)
+  // 4. Ürün Silme Fonksiyonu
   async urunSil(id) {
-    const response = await fetch(`${API_URL}/${id}`, {
+    const res = await fetch(`http://localhost:3000/api/urunler/${id}`, {
       method: "DELETE",
     });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.mesaj || "Ürün silinemedi.");
-    return result;
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.hata || "Ürün silinemedi.");
+    }
+    return await res.json();
+  },
+
+  // 5. YENİ: Kullanıcı Kayıt Olma Fonksiyonu (Tam nesne yapısının içinde)
+  async kayitOl(kullaniciVerisi) {
+    const res = await fetch("http://localhost:3000/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(kullaniciVerisi),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.hata || "Kayıt olunurken bir hata oluştu.");
+    }
+    return await res.json();
   },
 };
-
-// Diğer JS dosyalarından erişebilmek için window nesnesine bağlıyoruz
-window.apiService = apiService;

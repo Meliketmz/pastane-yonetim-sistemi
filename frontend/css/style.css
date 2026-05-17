@@ -518,3 +518,131 @@ body {
 .btn-confirm:hover {
   background: #db2777;
 }
+
+/* -------------------------------------
+   8. KARŞILAMA AFİŞİ (HERO BANNER)
+------------------------------------- */
+.welcome-banner {
+  position: relative;
+  width: 100%;
+  height: 380px; /* Yüksekliği biraz artırdık ki resim dikeyde rahatlasın, çok kesilmesin */
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  padding: 40px;
+
+  background-image: url("../img/tart.jpeg"); /* Senin resminin adı */
+
+  /* --- GÜNCELLEDİĞİMİZ KISIM --- */
+  background-size: cover; /* Resmi tekrar tüm alana yayar boşluk bırakmaz */
+  background-position: center center; /* Aşırı zoom hissini engeller, resmin tam göbeğine odaklanır */
+  background-repeat: no-repeat;
+}
+
+/* Yazının okunabilmesi için resmin sol tarafına hafif karanlık bir degrade (geçiş) ekliyoruz */
+.welcome-banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(52, 76, 61, 0.8) 0%,
+    rgba(52, 76, 61, 0.1) 100%
+  ); /* Evergreen rengimizin şeffaf hali */
+  z-index: 1;
+}
+
+.banner-content {
+  position: relative;
+  z-index: 2;
+  color: var(--white);
+  max-width: 500px;
+}
+
+.banner-content h3 {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.banner-content p {
+  font-size: 16px;
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+/* -------------------------------------
+   GÜNCELLEME: ETKİLEŞİMLİ BİLGİ KARTLARI
+------------------------------------- */
+/* CSS dosyasında daha önce eklediğimiz .stat-card sınıfını bulup ezmesi için bunu ekliyoruz */
+.stat-card {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  cursor: pointer; /* Fare imlecini el işaretine çevirir */
+  position: relative;
+  top: 0;
+}
+
+/* Kartın üzerine gelince (Hover) */
+.stat-card:hover {
+  transform: translateY(-8px); /* Yukarı kalkar */
+  box-shadow: 0 15px 30px rgba(216, 149, 155, 0.3); /* Mauve rengimizde yumuşak bir gölge verir */
+  border-color: var(--mauve); /* Kenarlık rengi pembeleşir */
+}
+
+/* Karta tıklanırken (Active) */
+.stat-card:active {
+  transform: translateY(
+    -2px
+  ); /* Tıklama hissi vermek için hafifçe aşağı iner */
+  box-shadow: 0 5px 15px rgba(216, 149, 155, 0.2);
+}
+
+/* -------------------------------------
+   9. KATEGORİ GRUPLAMA TASARIMI
+------------------------------------- */
+.menu-kategori-bolumu {
+  margin-bottom: 50px; /* Her kategori grubu arasında ferah bir boşluk bırakır */
+  animation: fadeIn 0.5s ease;
+}
+
+.menu-kategori-baslik {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--evergreen);
+  border-bottom: 2px solid var(--peony);
+  padding-bottom: 12px;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.menu-kategori-baslik i {
+  color: var(--mauve);
+  font-size: 26px;
+}
+
+.kategori-adet-badge {
+  font-size: 13px;
+  background-color: var(--mist);
+  color: var(--sage);
+  padding: 6px 15px;
+  border-radius: 20px;
+  margin-left: auto; /* Badge'i sağ tarafa yaslar */
+  font-weight: 800;
+  border: 1px solid var(--peony);
+  letter-spacing: 0.5px;
+}
+
+.menu-kategori-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+}
