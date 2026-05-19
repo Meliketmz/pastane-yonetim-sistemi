@@ -1,454 +1,492 @@
 const app = {
-  silinecekId: null,
-  tumUrunler: [],
-
-  icecekKategorileri: [
-    "Sıcak Kahveler",
-    "Soğuk Kahveler",
-    "Çaylar",
-    "Soğuk İçecekler",
-    "Gazlı İçecekler",
-    "Şişe / Hazır İçecekler",
-  ],
+  guncelFiltre: "all",
+  guncelSayfa: "ozet-sayfasi",
+  oncekiFiltre: "all",
+  oncekiSayfa: "ozet-sayfasi",
+  oncekiMenuIndex: -1,
+  silinecekUrunId: null,
+  silinecekUrunAdi: null,
 
   async init() {
-    // Giriş yapan kullanıcının adını hafızadan oku ve ekrana bas
-    const hafizadakiIsim = localStorage.getItem("aktifKullaniciAdi") || "Elif";
-    const adEtiketi = document.getElementById("lbl-aktif-user");
-    if (adEtiketi) {
-      adEtiketi.innerText = hafizadakiIsim;
-    }
+    this.form = document.getElementById("urun-form");
+    this.resimInput = document.getElementById("resim");
+    this.resimIsim = document.getElementById("resim-isim");
+    this.uploadArea = document.querySelector(".upload-area");
 
-    const bekleyenModal = sessionStorage.getItem("showModalMessage");
-    const sonSayfa = sessionStorage.getItem("aktifSayfa");
-    const sonBaslik = sessionStorage.getItem("aktifBaslik");
+    this.bindEvents();
+    this.sayfaGoster("ozet-sayfasi", "all");
+  },
 
-    if (sonSayfa) {
+  sayfaGoster(sayfaId, filtre = null) {
+    this.guncelSayfa = sayfaId;
+    if (filtre !== null) this.guncelFiltre = filtre;
+
+    const pageSections = document.querySelectorAll(".page-section");
+    pageSections.forEach((page) => page.classList.remove("active"));
+    document.getElementById(sayfaId).classList.add("active");
+
+    const menuItems = document.querySelectorAll(".menu-item");
+    menuItems.forEach((m) => m.classList.remove("active"));
+
+    if (sayfaId === "ekle-sayfasi") {
       document
-        .querySelectorAll(".page-section")
-        .forEach((p) => p.classList.remove("active"));
-      const hedefSayfa = document.getElementById(sonSayfa);
-      if (hedefSayfa) hedefSayfa.classList.add("active");
-
-      if (sonBaslik) {
-        const baslikEl = document.getElementById("liste-baslik");
-        if (baslikEl) baslikEl.innerHTML = sonBaslik;
-      }
-
-      const btnGeri = document.getElementById("btn-geri");
-      if (btnGeri) {
-        if (
-          sonBaslik &&
-          !sonBaslik.includes("Menü Özeti") &&
-          !sonBaslik.includes("Yiyecek") &&
-          !sonBaslik.includes("İçecek")
-        ) {
-          btnGeri.style.display = "block";
-        } else {
-          btnGeri.style.display = "none";
+        .querySelector('[data-target="ekle-sayfasi"]')
+        .classList.add("active");
+    } else if (sayfaId === "ayarlar-sayfasi") {
+      document
+        .querySelector('[data-target="ayarlar-sayfasi"]')
+        .classList.add("active");
+      this.ayarlarSayfasiniYukle();
+    } else if (sayfaId === "ozet-sayfasi") {
+      document
+        .querySelector('[data-target="ozet-sayfasi"]')
+        .classList.add("active");
+    } else if (sayfaId === "liste-sayfasi") {
+      if (
+        this.oncekiMenuIndex !== undefined &&
+        this.oncekiMenuIndex !== -1 &&
+        filtre === this.oncekiFiltre
+      ) {
+        if (menuItems[this.oncekiMenuIndex]) {
+          menuItems[this.oncekiMenuIndex].classList.add("active");
+        }
+      } else {
+        if (this.guncelFiltre === "yiyecek") {
+          document.getElementById("menu-yiyecek").classList.add("active");
+        } else if (this.guncelFiltre === "icecek") {
+          document.getElementById("menu-icecek").classList.add("active");
         }
       }
+    }
 
-      document
-        .querySelectorAll(".menu-item")
-        .forEach((m) => m.classList.remove("active"));
-      if (sonBaslik && sonBaslik.includes("İçecek")) {
-        document.getElementById("menu-icecek")?.classList.add("active");
-      } else if (sonBaslik && sonBaslik.includes("Yiyecek")) {
-        document.getElementById("menu-yiyecek")?.classList.add("active");
+    if (sayfaId === "liste-sayfasi") {
+      this.urunleriYukle(this.guncelFiltre);
+    } else if (sayfaId === "ozet-sayfasi") {
+      this.istatistikleriYenile();
+    }
+  },
+
+  async ayarlarSayfasiniYukle() {
+    const emailInput = document.getElementById("ayar-email");
+    let aktifEmail = "";
+
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        aktifEmail = payload.email;
+        if (emailInput) emailInput.value = aktifEmail;
       }
-
-      sessionStorage.removeItem("aktifSayfa");
-      sessionStorage.removeItem("aktifBaslik");
+    } catch (e) {
+      console.error("E-posta okunamadı", e);
+      if (emailInput) emailInput.value = "Bilinmeyen E-posta";
     }
 
-    if (bekleyenModal) {
-      this.showSuccessModal(bekleyenModal);
-      sessionStorage.removeItem("showModalMessage");
-    }
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/auth/giris-kayitlari",
+      );
+      const loglar = await response.json();
 
-    this.etkinlikDinleyicileriKazan();
-    await this.menuListele();
+      const tbody = document.getElementById("log-tablosu-body");
+      if (tbody) {
+        tbody.innerHTML = "";
+        if (loglar.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="3" style="text-align: center; padding: 20px;">Henüz giriş kaydı bulunmuyor.</td></tr>';
+        } else {
+          loglar.forEach((log) => {
+            const tarih = new Date(log.giris_tarihi).toLocaleString("tr-TR");
+            tbody.innerHTML += `
+                       <tr style="border-bottom: 1px solid #eee;">
+                           <td style="padding: 12px; font-weight: 500; color: #555;">${tarih}</td>
+                           <td style="padding: 12px; font-weight: bold; color: var(--evergreen);">${log.ad_soyad}</td>
+                           <td style="padding: 12px; color: #666;">${log.email}</td>
+                       </tr>
+                   `;
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Loglar çekilemedi", error);
+      document.getElementById("log-tablosu-body").innerHTML =
+        '<tr><td colspan="3" style="text-align: center; padding: 20px; color: red;">Kayıtlar yüklenirken bir hata oluştu.</td></tr>';
+    }
   },
 
-  showSuccessModal(mesaj) {
-    const temizMesaj = mesaj.replace("(Soft Delete)", "").trim();
-    sessionStorage.setItem("showModalMessage", temizMesaj);
-    document.getElementById("success-message").innerText = temizMesaj;
-    document.getElementById("success-modal").classList.add("active");
-  },
+  bindEvents() {
+    const menuItems = document.querySelectorAll(".menu-item");
+    menuItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        const targetId = item.getAttribute("data-target");
+        let filtre = "all";
+        if (item.id === "menu-yiyecek") filtre = "yiyecek";
+        if (item.id === "menu-icecek") filtre = "icecek";
 
-  etkinlikDinleyicileriKazan() {
-    // YENİ: Ürün adı kutusuna yazılan her şeyi canlı olarak Türkçe BÜYÜK HARFE çevirir
-    const adInput = document.getElementById("ad");
-    if (adInput) {
-      adInput.addEventListener("input", function () {
-        this.value = this.value.toLocaleUpperCase("tr-TR");
+        this.oncekiMenuIndex = -1;
+        this.sayfaGoster(targetId, filtre);
       });
-    }
+    });
 
-    document
-      .getElementById("urun-form")
-      .addEventListener("submit", async (e) => {
-        e.preventDefault();
-        await this.formuKaydet();
-      });
+    document.getElementById("kard-toplam").addEventListener("click", () => {
+      this.sayfaGoster("liste-sayfasi", "all");
+    });
+    document.getElementById("kard-stok").addEventListener("click", () => {
+      this.sayfaGoster("liste-sayfasi", "stokta");
+    });
+    document.getElementById("kard-tukenmis").addEventListener("click", () => {
+      this.sayfaGoster("liste-sayfasi", "tukenmis");
+      menuItems.forEach((m) => m.classList.remove("active"));
+      document
+        .querySelector('[data-target="ozet-sayfasi"]')
+        .classList.add("active");
+    });
+    document.getElementById("kard-kategori").addEventListener("click", () => {
+      this.sayfaGoster("liste-sayfasi", "all");
+    });
 
-    document.getElementById("btn-success-ok").addEventListener("click", () => {
-      sessionStorage.removeItem("showModalMessage");
-      document.getElementById("success-modal").classList.remove("active");
+    document.getElementById("btn-geri").addEventListener("click", () => {
+      this.sayfaGoster("ozet-sayfasi");
+    });
+
+    this.resimInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        this.resimIsim.innerText = file.name;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          this.uploadArea.style.backgroundImage = `url(${event.target.result})`;
+          this.uploadArea.style.backgroundSize = "cover";
+          this.uploadArea.style.backgroundPosition = "center";
+          this.uploadArea.querySelector(".upload-icon").style.display = "none";
+        };
+        reader.readAsDataURL(file);
+      }
     });
 
     document.getElementById("btn-form-iptal").addEventListener("click", () => {
       urunlerView.formuTemizle();
-      document
-        .querySelectorAll(".page-section")
-        .forEach((p) => p.classList.remove("active"));
-      document.getElementById("liste-sayfasi").classList.add("active");
+      this.sayfaGoster(this.oncekiSayfa, this.oncekiFiltre);
     });
 
-    document.getElementById("menu-yiyecek").addEventListener("click", () => {
-      const yiyecekler = this.tumUrunler.filter(
-        (u) => !this.icecekKategorileri.includes(u.kategori),
-      );
-      urunlerView.renderUrunler(yiyecekler);
-      document.getElementById("liste-baslik").innerHTML =
-        '<i class="fas fa-utensils"></i> Yiyecek Menüsü';
-      document.getElementById("btn-geri").style.display = "none";
+    const deleteModal = document.getElementById("delete-modal");
+    const btnCancelDelete = document.getElementById("btn-cancel-delete");
+    const btnConfirmDelete = document.getElementById("btn-confirm-delete");
 
-      document
-        .querySelectorAll(".page-section")
-        .forEach((p) => p.classList.remove("active"));
-      document.getElementById("liste-sayfasi").classList.add("active");
-    });
+    if (btnCancelDelete) {
+      btnCancelDelete.addEventListener("click", () => {
+        deleteModal.classList.remove("active");
+        this.silinecekUrunId = null;
+        this.silinecekUrunAdi = null;
+      });
+    }
 
-    document.getElementById("menu-icecek").addEventListener("click", () => {
-      const icecekler = this.tumUrunler.filter((u) =>
-        this.icecekKategorileri.includes(u.kategori),
-      );
-      urunlerView.renderUrunler(icecekler);
-      document.getElementById("liste-baslik").innerHTML =
-        '<i class="fas fa-mug-hot"></i> İçecek Menüsü';
-      document.getElementById("btn-geri").style.display = "none";
+    if (btnConfirmDelete) {
+      btnConfirmDelete.addEventListener("click", async () => {
+        if (!this.silinecekUrunId) return;
 
-      document
-        .querySelectorAll(".page-section")
-        .forEach((p) => p.classList.remove("active"));
-      document.getElementById("liste-sayfasi").classList.add("active");
-    });
+        const orijinalMetin = btnConfirmDelete.innerHTML;
+        btnConfirmDelete.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Siliniyor...`;
+        btnConfirmDelete.disabled = true;
 
-    document.getElementById("kard-toplam").addEventListener("click", () => {
-      urunlerView.renderUrunler(this.tumUrunler);
-      document.getElementById("liste-baslik").innerHTML =
-        '<i class="fas fa-layer-group"></i> Tüm Menü Özeti';
-      document.getElementById("btn-geri").style.display = "none";
-      document
-        .querySelectorAll(".page-section")
-        .forEach((p) => p.classList.remove("active"));
-      document.getElementById("liste-sayfasi").classList.add("active");
-    });
+        try {
+          await apiService.urunSil(this.silinecekUrunId);
+          deleteModal.classList.remove("active");
 
-    document.getElementById("kard-stok").addEventListener("click", () => {
-      const stoktakiler = this.tumUrunler.filter((u) => u.stokDurumu == 1);
-      urunlerView.renderUrunler(stoktakiler);
-      document.getElementById("liste-baslik").innerHTML =
-        '<i class="fas fa-check-circle" style="color: var(--sage);"></i> Sadece Stoktaki Lezzetler';
-      document.getElementById("btn-geri").style.display = "block";
-      document
-        .querySelectorAll(".page-section")
-        .forEach((p) => p.classList.remove("active"));
-      document.getElementById("liste-sayfasi").classList.add("active");
-    });
+          const successModal = document.getElementById("success-modal");
+          const successMessage = document.getElementById("success-message");
+          const btnSuccessOk = document.getElementById("btn-success-ok");
 
-    document.getElementById("kard-tukenmis").addEventListener("click", () => {
-      const tukenenler = this.tumUrunler.filter((u) => u.stokDurumu == 0);
-      urunlerView.renderUrunler(tukenenler);
-      document.getElementById("liste-baslik").innerHTML =
-        '<i class="fas fa-times-circle" style="color: #d6727e;"></i> Tükenen Lezzetler';
-      document.getElementById("btn-geri").style.display = "block";
-      document
-        .querySelectorAll(".page-section")
-        .forEach((p) => p.classList.remove("active"));
-      document.getElementById("liste-sayfasi").classList.add("active");
-    });
+          if (successModal && successMessage) {
+            successMessage.innerText = `"${this.silinecekUrunAdi}" isimli lezzet başarıyla menüden silindi!`;
+            successModal.classList.add("active");
 
-    document.getElementById("kard-kategori").addEventListener("click", () => {
-      const sirali = [...this.tumUrunler].sort((a, b) =>
-        a.kategori.localeCompare(b.kategori),
-      );
-      urunlerView.renderUrunler(sirali);
-      document.getElementById("liste-baslik").innerHTML =
-        '<i class="fas fa-tags" style="color: var(--mauve);"></i> Kategorilere Göre Sıralı Liste';
-      document.getElementById("btn-geri").style.display = "block";
-      document
-        .querySelectorAll(".page-section")
-        .forEach((p) => p.classList.remove("active"));
-      document.getElementById("liste-sayfasi").classList.add("active");
-    });
+            btnSuccessOk.onclick = () => {
+              successModal.classList.remove("active");
+              this.urunleriYukle(this.guncelFiltre);
+            };
+          } else {
+            this.urunleriYukle(this.guncelFiltre);
+          }
+        } catch (error) {
+          alert("Silme işlemi başarısız: " + error.message);
+        } finally {
+          btnConfirmDelete.innerHTML = orijinalMetin;
+          btnConfirmDelete.disabled = false;
+          this.silinecekUrunId = null;
+          this.silinecekUrunAdi = null;
+        }
+      });
+    }
 
-    document.getElementById("btn-geri").addEventListener("click", () => {
-      urunlerView.renderUrunler(this.tumUrunler);
-      document.getElementById("liste-baslik").innerHTML =
-        '<i class="fas fa-layer-group"></i> Tüm Menü Özeti';
-      document.getElementById("btn-geri").style.display = "none";
-    });
+    const ayarlarForm = document.getElementById("ayarlar-form");
+    if (ayarlarForm) {
+      ayarlarForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("btn-sifre-kaydet");
+        const orijinalMetin = btn.innerHTML;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Kaydediliyor...`;
+        btn.disabled = true;
 
-    document.getElementById("ayarlar-form").addEventListener("submit", (e) => {
+        try {
+          const email = document.getElementById("ayar-email").value;
+          const yeniSifre = document.getElementById("ayar-sifre").value;
+
+          const response = await fetch(
+            "http://localhost:3000/api/auth/sifre-guncelle",
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, yeniSifre }),
+            },
+          );
+
+          const sonuc = await response.json();
+
+          if (!response.ok)
+            throw new Error(sonuc.hata || "Şifre güncellenemedi.");
+
+          const successModal = document.getElementById("success-modal");
+          const successMessage = document.getElementById("success-message");
+          const btnSuccessOk = document.getElementById("btn-success-ok");
+
+          if (successModal && successMessage) {
+            successMessage.innerText =
+              "Güvenlik şifreniz başarıyla güncellendi! Yeni şifrenizle kullanıma devam edebilirsiniz.";
+            successModal.classList.add("active");
+
+            btnSuccessOk.onclick = () => {
+              successModal.classList.remove("active");
+              document.getElementById("ayar-sifre").value = "";
+            };
+          } else {
+            alert("Şifreniz başarıyla güncellendi!");
+            document.getElementById("ayar-sifre").value = "";
+          }
+        } catch (error) {
+          alert("Hata: " + error.message);
+        } finally {
+          btn.innerHTML = orijinalMetin;
+          btn.disabled = false;
+        }
+      });
+    }
+
+    this.form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      this.showSuccessModal("Profil bilgileriniz başarıyla güncellendi!");
-    });
+      const btn = document.getElementById("btn-form-kaydet");
+      const orijinalMetin = btn.innerHTML;
+      btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Bekleniyor...`;
+      btn.disabled = true;
 
-    document.getElementById("resim").addEventListener("change", function (e) {
-      const dosya = e.target.files[0];
-      const uploadArea = document.querySelector(".upload-area");
-      const resimIsimDiv = document.getElementById("resim-isim");
-      if (dosya) {
-        const okuyucu = new FileReader();
-        okuyucu.onload = function (e) {
-          uploadArea.style.backgroundImage = `url(${e.target.result})`;
-          uploadArea.style.backgroundSize = "contain";
-          uploadArea.style.backgroundPosition = "center";
-          uploadArea.style.backgroundRepeat = "no-repeat";
-          uploadArea.querySelector(".upload-icon").style.display = "none";
-          resimIsimDiv.style.display = "none";
-        };
-        okuyucu.readAsDataURL(dosya);
+      try {
+        const formData = new FormData(this.form);
+        const id = document.getElementById("urun-id").value;
+        const urunAdi = document.getElementById("ad").value.trim();
+
+        // 🌟 DÜZELTİLDİ: Seçilen kategoriyi form sıfırlanmadan en başta hafızaya alıyoruz
+        const secilenKategori = document.getElementById("kategori").value;
+
+        // İçecek kategorilerinin tam listesi
+        const icecekKategorileri = [
+          "Siyah Çay",
+          "Yeşil Çay",
+          "Bitki Çayları",
+          "Çekirdek Kahve",
+          "Öğütülmüş Kahve",
+          "Granül Kahve",
+          "Kapsül Kahve",
+          "Kola",
+          "Soda",
+          "Fanta",
+          "Gazoz",
+          "Küçük Su",
+          "Büyük Su",
+          "Cam Şişe Su",
+          "Pet Şişe Su",
+        ];
+
+        // 🌟 DÜZELTİLDİ: Ürünün yiyecek mi içecek mi olduğunun akıllı ayrımı
+        const isIcecek = icecekKategorileri.includes(secilenKategori);
+        const urunTuruMetni = isIcecek ? "içecek" : "lezzet";
+
+        const successModal = document.getElementById("success-modal");
+        const successMessage = document.getElementById("success-message");
+        const btnSuccessOk = document.getElementById("btn-success-ok");
+
+        if (id) {
+          await apiService.urunGuncelle(id, formData);
+          if (successModal && successMessage) {
+            successMessage.innerText = `"${urunAdi}" isimli ${urunTuruMetni}te yapılan değişiklikler başarıyla kaydedildi.`;
+            successModal.classList.add("active");
+            btnSuccessOk.onclick = () => {
+              successModal.classList.remove("active");
+              urunlerView.formuTemizle();
+              this.sayfaGoster(this.oncekiSayfa, this.oncekiFiltre);
+            };
+          } else {
+            urunlerView.formuTemizle();
+            this.sayfaGoster(this.oncekiSayfa, this.oncekiFiltre);
+          }
+        } else {
+          await apiService.urunEkle(formData);
+          if (successModal && successMessage) {
+            // 🌟 DÜZELTİLDİ: Mesaj artık dinamik ("taptaze içecek" veya "taptaze lezzet")
+            successMessage.innerText = `"${urunAdi}" isimli taptaze ${urunTuruMetni} başarıyla menüye eklendi!`;
+            successModal.classList.add("active");
+            btnSuccessOk.onclick = () => {
+              successModal.classList.remove("active");
+              urunlerView.formuTemizle();
+
+              // 🌟 DÜZELTİLDİ: İçecek eklenince doğrudan İçecek Menüsüne fırlatır
+              if (isIcecek) {
+                this.sayfaGoster("liste-sayfasi", "icecek");
+              } else {
+                this.sayfaGoster("liste-sayfasi", "yiyecek");
+              }
+            };
+          } else {
+            urunlerView.formuTemizle();
+            this.sayfaGoster("liste-sayfasi", "all");
+          }
+        }
+      } catch (error) {
+        console.error("İşlem hatası:", error);
+        alert(error.message);
+      } finally {
+        btn.innerHTML = orijinalMetin;
+        btn.disabled = false;
       }
     });
 
-    document
-      .querySelector('[data-target="ekle-sayfasi"]')
-      .addEventListener("click", () => {
-        urunlerView.formuTemizle();
-      });
+    const btnLogout = document.getElementById("btn-logout");
+    const logoutModal = document.getElementById("logout-modal");
+    const btnCancelLogout = document.getElementById("btn-cancel-logout");
+    const btnConfirmLogout = document.getElementById("btn-confirm-logout");
 
-    document.getElementById("btn-logout").addEventListener("click", () => {
-      document.getElementById("logout-modal").classList.add("active");
-    });
-
-    document
-      .getElementById("btn-cancel-logout")
-      .addEventListener("click", () => {
-        document.getElementById("logout-modal").classList.remove("active");
-      });
-
-    document
-      .getElementById("btn-confirm-logout")
-      .addEventListener("click", () => {
+    if (btnLogout)
+      btnLogout.addEventListener("click", () =>
+        logoutModal.classList.add("active"),
+      );
+    if (btnCancelLogout)
+      btnCancelLogout.addEventListener("click", () =>
+        logoutModal.classList.remove("active"),
+      );
+    if (btnConfirmLogout) {
+      btnConfirmLogout.addEventListener("click", () => {
+        localStorage.removeItem("token");
         localStorage.removeItem("aktifKullaniciAdi");
         window.location.href = "login.html";
       });
-
-    document
-      .getElementById("btn-cancel-delete")
-      .addEventListener("click", () => {
-        document.getElementById("delete-modal").classList.remove("active");
-        this.silinecekId = null;
-      });
-
-    document
-      .getElementById("btn-confirm-delete")
-      .addEventListener("click", async () => {
-        if (this.silinecekId) {
-          const aktifSayfa =
-            document.querySelector(".page-section.active")?.id ||
-            "liste-sayfasi";
-          const aktifBaslik =
-            document.getElementById("liste-baslik")?.innerHTML || "";
-          sessionStorage.setItem("aktifSayfa", aktifSayfa);
-          sessionStorage.setItem("aktifBaslik", aktifBaslik);
-
-          try {
-            const res = await apiService.urunSil(this.silinecekId);
-
-            await this.menuListele();
-
-            document.getElementById("delete-modal").classList.remove("active");
-
-            this.showSuccessModal(
-              res.mesaj || "Lezzet menüden başarıyla kaldırıldı.",
-            );
-          } catch (error) {
-            notification.show(error.message, "error");
-          }
-        }
-      });
-  },
-
-  async menuListele() {
-    const mainArea = document.querySelector(".main-area");
-    const contentContainer = document.querySelector(".content-container");
-    const grid = document.getElementById("urunler-grid");
-
-    const scrollWindow = window.scrollY || document.documentElement.scrollTop;
-    const scrollMain = mainArea ? mainArea.scrollTop : 0;
-    const scrollContainer = contentContainer ? contentContainer.scrollTop : 0;
-
-    const hBody = document.documentElement.scrollHeight;
-    const hMain = mainArea ? mainArea.scrollHeight : 0;
-    const hContainer = contentContainer ? contentContainer.scrollHeight : 0;
-    const hGrid = grid ? grid.scrollHeight : 0;
-
-    document.body.style.minHeight = `${hBody}px`;
-    if (mainArea) mainArea.style.minHeight = `${hMain}px`;
-    if (contentContainer) contentContainer.style.minHeight = `${hContainer}px`;
-    if (grid) grid.style.minHeight = `${hGrid}px`;
-
-    try {
-      const data = await apiService.urunleriGetir();
-      this.tumUrunler = data.urunler;
-      this.ozetPaneliGuncelle(this.tumUrunler);
-
-      const baslikElementi = document.getElementById("liste-baslik");
-      const baslik = baslikElementi ? baslikElementi.innerText : "";
-
-      if (baslik.includes("Yiyecek")) {
-        const yiyecekler = this.tumUrunler.filter(
-          (u) => !this.icecekKategorileri.includes(u.kategori),
-        );
-        urunlerView.renderUrunler(yiyecekler);
-      } else if (baslik.includes("İçecek")) {
-        const icecekler = this.tumUrunler.filter((u) =>
-          this.icecekKategorileri.includes(u.kategori),
-        );
-        urunlerView.renderUrunler(icecekler);
-      } else if (baslik.includes("Stoktaki")) {
-        const stoktakiler = this.tumUrunler.filter((u) => u.stokDurumu == 1);
-        urunlerView.renderUrunler(stoktakiler);
-      } else if (baslik.includes("Tükenen")) {
-        const tukenenler = this.tumUrunler.filter((u) => u.stokDurumu == 0);
-        urunlerView.renderUrunler(tukenenler);
-      } else if (baslik.includes("Sıralı")) {
-        const sirali = [...this.tumUrunler].sort((a, b) =>
-          a.kategori.localeCompare(b.kategori),
-        );
-        urunlerView.renderUrunler(sirali);
-      } else {
-        urunlerView.renderUrunler(this.tumUrunler);
-      }
-
-      const konumuMühürle = () => {
-        window.scrollTo(0, scrollWindow);
-        if (mainArea) mainArea.scrollTop = scrollMain;
-        if (contentContainer) contentContainer.scrollTop = scrollContainer;
-      };
-
-      konumuMühürle();
-      requestAnimationFrame(konumuMühürle);
-
-      setTimeout(() => {
-        konumuMühürle();
-        document.body.style.minHeight = "";
-        if (mainArea) mainArea.style.minHeight = "";
-        if (contentContainer) contentContainer.style.minHeight = "";
-        if (grid) grid.style.minHeight = "";
-      }, 50);
-
-      setTimeout(() => {
-        konumuMühürle();
-      }, 150);
-    } catch (error) {
-      console.error("Liste yüklenemedi:", error);
-      document.body.style.minHeight = "";
-      if (mainArea) mainArea.style.minHeight = "";
-      if (contentContainer) contentContainer.style.minHeight = "";
-      if (grid) grid.style.minHeight = "";
     }
   },
 
-  ozetPaneliGuncelle(urunler) {
-    document.getElementById("stat-toplam").innerText = urunler.length;
-    document.getElementById("stat-stok").innerText = urunler.filter(
-      (u) => u.stokDurumu == 1,
-    ).length;
-    document.getElementById("stat-tukenmis").innerText = urunler.filter(
-      (u) => u.stokDurumu == 0,
-    ).length;
-    document.getElementById("stat-kategori").innerText = new Set(
-      urunler.map((u) => u.kategori),
-    ).size;
+  silmeIsleminiBaslat(id, ad) {
+    this.silinecekUrunId = id;
+    this.silinecekUrunAdi = ad;
+    const deleteModal = document.getElementById("delete-modal");
+    if (deleteModal) {
+      deleteModal.classList.add("active");
+    }
   },
 
-  async formuKaydet() {
-    // YENİ: Kaydet butonuna basıldığı an veritabanına gitmeden önce de ismi büyük harfe zorlar
-    const adInput = document.getElementById("ad");
-    if (adInput) {
-      adInput.value = adInput.value.toLocaleUpperCase("tr-TR");
-    }
-
-    const id = document.getElementById("urun-id").value;
-    const formElement = document.getElementById("urun-form");
-    const formData = new FormData(formElement);
-    const eklenenKategori = formData.get("kategori");
-
-    const isIcecek = this.icecekKategorileri.includes(eklenenKategori);
-    const hrefBaslik = isIcecek
-      ? '<i class="fas fa-mug-hot"></i> İçecek Menüsü'
-      : '<i class="fas fa-utensils"></i> Yiyecek Menüsü';
-
-    sessionStorage.setItem("aktifSayfa", "liste-sayfasi");
-    sessionStorage.setItem("aktifBaslik", hrefBaslik);
-
+  async urunleriYukle(filtre = "all") {
     try {
-      let res;
-      if (id) {
-        res = await apiService.urunGuncelle(id, formData);
+      const urunler = await apiService.urunleriGetir();
+      this.istatistikleriGuncelle(urunler);
+
+      let gosterilecekUrunler = urunler;
+      const icecekKategorileri = [
+        "Siyah Çay",
+        "Yeşil Çay",
+        "Bitki Çayları",
+        "Çekirdek Kahve",
+        "Öğütülmüş Kahve",
+        "Granül Kahve",
+        "Kapsül Kahve",
+        "Kola",
+        "Soda",
+        "Fanta",
+        "Gazoz",
+        "Küçük Su",
+        "Büyük Su",
+        "Cam Şişe Su",
+        "Pet Şişe Su",
+      ];
+
+      if (filtre === "yiyecek") {
+        gosterilecekUrunler = urunler.filter(
+          (u) => !icecekKategorileri.includes(u.kategori),
+        );
+        document.getElementById("liste-baslik").innerHTML =
+          '<i class="fas fa-utensils"></i> Menüdeki Yiyecekler';
+      } else if (filtre === "icecek") {
+        gosterilecekUrunler = urunler.filter((u) =>
+          icecekKategorileri.includes(u.kategori),
+        );
+        document.getElementById("liste-baslik").innerHTML =
+          '<i class="fas fa-mug-hot"></i> Menüdeki İçecekler';
+      } else if (filtre === "tukenmis") {
+        gosterilecekUrunler = urunler.filter((u) => u.stokDurumu == 0);
+        document.getElementById("liste-baslik").innerHTML =
+          '<i class="fas fa-exclamation-circle"></i> Tükenen Lezzetler';
+      } else if (filtre === "stokta") {
+        gosterilecekUrunler = urunler.filter(
+          (u) => u.stokDurumu == 1 || u.stokDurumu == undefined,
+        );
+        document.getElementById("liste-baslik").innerHTML =
+          '<i class="fas fa-check-circle"></i> Stoktaki Lezzetler';
       } else {
-        res = await apiService.urunEkle(formData);
+        document.getElementById("liste-baslik").innerHTML =
+          '<i class="fas fa-layer-group"></i> Menüdeki Tüm Lezzetler';
       }
 
-      const mesaj = res.mesaj || "İşlem başarıyla tamamlandı.";
-
-      urunlerView.formuTemizle();
-
-      document
-        .querySelectorAll(".page-section")
-        .forEach((p) => p.classList.remove("active"));
-      document.getElementById("liste-sayfasi").classList.add("active");
-
-      document.getElementById("liste-baslik").innerHTML = hrefBaslik;
-      document.getElementById("btn-geri").style.display = "none";
-
-      document
-        .querySelectorAll(".menu-item")
-        .forEach((m) => m.classList.remove("active"));
-      if (isIcecek) {
-        document.getElementById("menu-icecek")?.classList.add("active");
-      } else {
-        document.getElementById("menu-yiyecek")?.classList.add("active");
-      }
-
-      sessionStorage.setItem("showModalMessage", mesaj);
-
-      await this.menuListele();
-
-      this.showSuccessModal(mesaj);
+      urunlerView.renderUrunler(gosterilecekUrunler);
     } catch (error) {
-      notification.show(error.message, "error");
+      console.error("Ürünler yüklenirken hata:", error);
     }
   },
 
   duzenlemeyiBaslat(id, ad, kategori, fiyat, stokDurumu) {
-    urunlerView.formuDoldur({ id, ad, kategori, fiyat, stokDurumu });
-    document
-      .querySelectorAll(".page-section")
-      .forEach((p) => p.classList.remove("active"));
-    document.getElementById("ekle-sayfasi").classList.add("active");
-    document
-      .querySelectorAll(".menu-item")
-      .forEach((m) => m.classList.remove("active"));
-    document
-      .querySelector('[data-target="ekle-sayfasi"]')
-      .classList.add("active");
+    this.oncekiSayfa = this.guncelSayfa;
+    this.oncekiFiltre = this.guncelFiltre;
+
+    const menuItems = document.querySelectorAll(".menu-item");
+    this.oncekiMenuIndex = -1;
+    menuItems.forEach((item, index) => {
+      if (item.classList.contains("active")) {
+        this.oncekiMenuIndex = index;
+      }
+    });
+
+    const urun = { id, ad, kategori, fiyat, stokDurumu };
+    urunlerView.formuDoldur(urun);
+    this.sayfaGoster("ekle-sayfasi");
   },
 
-  urunSil(id) {
-    this.silinecekId = id;
-    document.getElementById("delete-modal").classList.add("active");
+  async istatistikleriYenile() {
+    try {
+      const urunler = await apiService.urunleriGetir();
+      this.istatistikleriGuncelle(urunler);
+    } catch (error) {
+      console.error("İstatistikler yenilenirken hata:", error);
+    }
+  },
+
+  istatistikleriGuncelle(urunler) {
+    document.getElementById("stat-toplam").innerText = urunler.length;
+    document.getElementById("stat-stok").innerText = urunler.filter(
+      (u) => u.stokDurumu == 1 || u.stokDurumu == undefined,
+    ).length;
+    document.getElementById("stat-tukenmis").innerText = urunler.filter(
+      (u) => u.stokDurumu == 0,
+    ).length;
+
+    const kategoriler = new Set(urunler.map((u) => u.kategori));
+    document.getElementById("stat-kategori").innerText = kategoriler.size;
   },
 };
 
 document.addEventListener("DOMContentLoaded", () => {
   app.init();
-  window.app = app;
 });

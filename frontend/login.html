@@ -157,6 +157,57 @@
         font-weight: bold;
         text-decoration: none;
       }
+
+      /* YENİ: Hata Modalı CSS Tasarımı */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(5px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 9999;
+      }
+      .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      .modal-box {
+        background: var(--white);
+        padding: 30px;
+        border-radius: 20px;
+        text-align: center;
+        max-width: 350px;
+        width: 90%;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        border-top: 5px solid var(--mauve);
+      }
+      .modal-overlay.active .modal-box {
+        transform: translateY(0);
+      }
+      .modal-icon {
+        color: var(--mauve);
+        font-size: 50px;
+        margin-bottom: 15px;
+      }
+      .modal-box h3 {
+        color: var(--mauve);
+        margin: 0 0 10px 0;
+      }
+      .modal-box p {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
     </style>
   </head>
   <body>
@@ -168,7 +219,7 @@
       <h2 class="login-title">Yönetim Paneli</h2>
       <p class="login-subtitle">Sisteme erişmek için bilgilerinizi girin.</p>
 
-      <form id="login-form" action="/frontend/index.html" autocomplete="off">
+      <form id="login-form" autocomplete="off" novalidate>
         <div class="input-group">
           <i class="fas fa-envelope icon-left"></i>
           <input
@@ -185,6 +236,7 @@
           <i class="fas fa-lock icon-left"></i>
           <input
             type="password"
+            id="login-password"
             class="login-input"
             required
             placeholder="Şifre"
@@ -200,27 +252,69 @@
       </div>
     </div>
 
+    <div class="modal-overlay" id="error-modal">
+      <div class="modal-box">
+        <i class="fas fa-exclamation-circle modal-icon"></i>
+        <h3>Giriş Başarısız</h3>
+        <p id="error-message">
+          Kaydınız bulunmamakta veya şifreniz hatalı. Lütfen üye olun.
+        </p>
+        <button
+          type="button"
+          class="btn-login"
+          id="btn-close-modal"
+          style="width: auto; padding: 10px 30px; margin-top: 0"
+        >
+          Tamam
+        </button>
+      </div>
+    </div>
+
+    <script src="js/services/api.js"></script>
+
+    <script src="js/services/api.js"></script>
+
     <script>
+      const modal = document.getElementById("error-modal");
+      const btnCloseModal = document.getElementById("btn-close-modal");
+
+      btnCloseModal.addEventListener("click", () => {
+        modal.classList.remove("active");
+      });
+
       document
         .getElementById("login-form")
-        .addEventListener("submit", function (e) {
-          const email = document
-            .getElementById("login-email")
-            .value.toLowerCase();
-          let isim = "Kullanıcı";
+        .addEventListener("submit", async function (e) {
+          e.preventDefault(); // Sayfanın hemen yenilenmesini durdur
 
-          if (email.includes("melike")) {
-            isim = "Melike";
-          } else if (email.includes("elif")) {
-            isim = "Elif";
-          } else {
-            // Eğer özel bir isimse, @ işaretinden öncesini alır ve ilk harfini büyük yapar
-            const temizParca = email.split("@")[0];
-            isim = temizParca.charAt(0).toUpperCase() + temizParca.slice(1);
+          const email = document.getElementById("login-email").value.trim();
+          const sifre = document.getElementById("login-password").value.trim();
+
+          if (!email || !sifre) {
+            document.getElementById("error-message").innerText =
+              "Lütfen e-posta ve şifrenizi eksiksiz girin.";
+            modal.classList.add("active");
+            return;
           }
 
-          localStorage.setItem("aktifKullaniciAdi", isim);
-        });
+          try {
+            // Arka planda veritabanına soruyoruz
+            const response = await apiService.girisYap({ email, sifre });
+
+            // Token'ı ve İsmi tarayıcıya kaydediyoruz
+            localStorage.setItem("token", response.token);
+
+            const gercekIsim = response.kullanici.ad_soyad.split(" ")[0];
+            localStorage.setItem("aktifKullaniciAdi", gercekIsim);
+
+            // Güvenliği geçtiğine göre paneli aç
+            window.location.href = "/frontend/index.html";
+          } catch (error) {
+            // Hata varsa modalı göster
+            document.getElementById("error-message").innerText = error.message;
+            modal.classList.add("active");
+          }
+        }); // İŞTE SİLİNEN KAPANIŞ PARANTEZLERİ BURADA!
     </script>
   </body>
 </html>

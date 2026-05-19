@@ -646,3 +646,19 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 30px;
 }
+
+/* Görsel önizlemesini sınırlayan CSS kodu */
+.upload-area {
+  max-width: 300px; /* Genişliği 300 pikselle sınırladık */
+  max-height: 300px; /* Yüksekliği 300 pikselle sınırladık */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain; /* Görseli kutunun içine sığdırır */
+  margin: 0 auto; /* Kutuyu ortalar */
+  border-radius: 12px; /* Köşeleri yuvarlar */
+}
+
+/* Dosya adının görünmesini engellemek için kod */
+#resim-isim {
+  display: none !important;
+}

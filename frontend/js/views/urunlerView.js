@@ -56,7 +56,8 @@ const urunlerView = {
                         </div>
                         <div class="card-actions">
                             <button class="btn-action btn-edit" onclick="app.duzenlemeyiBaslat(${urun.id}, '${urun.ad.replace(/'/g, "\\'")}', '${urun.kategori}', ${urun.fiyat}, ${urun.stokDurumu})"><i class="fas fa-pen"></i> Düzenle</button>
-                            <button class="btn-action btn-delete" onclick="app.urunSil(${urun.id})"><i class="fas fa-trash"></i> Sil</button>
+                            
+                            <button class="btn-action btn-delete" onclick="app.silmeIsleminiBaslat(${urun.id}, '${urun.ad.replace(/'/g, "\\'")}')"><i class="fas fa-trash"></i> Sil</button>
                         </div>
                     </div>
                 `;
@@ -80,7 +81,6 @@ const urunlerView = {
     document.getElementById("btn-form-kaydet").innerHTML =
       '<i class="fas fa-save"></i> Değişiklikleri Kaydet';
 
-    // İptal Butonunu Görünür Yap
     document.getElementById("btn-form-iptal").style.display = "block";
   },
 
@@ -100,7 +100,6 @@ const urunlerView = {
     document.getElementById("btn-form-kaydet").innerHTML =
       '<i class="fas fa-save"></i> Menüye Ekle ve Kaydet';
 
-    // Yeni ürün eklerken İptal butonunu gizle
     document.getElementById("btn-form-iptal").style.display = "none";
   },
 };

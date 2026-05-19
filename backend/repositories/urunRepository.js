@@ -11,14 +11,20 @@ class UrunRepository {
     });
   }
 
-  // Yeni ürün ekle (resim_url dahil edildi)
+  // Yeni ürün ekle (stokDurumu sütunu başarıyla dahil edildi!)
   create(urun) {
     return new Promise((resolve, reject) => {
       const query =
-        "INSERT INTO urunler (ad, kategori, fiyat, resim_url) VALUES (?, ?, ?, ?)";
+        "INSERT INTO urunler (ad, kategori, fiyat, stokDurumu, resim_url) VALUES (?, ?, ?, ?, ?)";
       db.run(
         query,
-        [urun.ad, urun.kategori, urun.fiyat, urun.resim_url || null],
+        [
+          urun.ad,
+          urun.kategori,
+          urun.fiyat,
+          urun.stokDurumu !== undefined ? urun.stokDurumu : 1, // Eğer seçilmediyse varsayılan 1 yapar
+          urun.resim_url || null,
+        ],
         function (err) {
           if (err) reject(err);
           resolve({ id: this.lastID, ...urun });
@@ -27,7 +33,7 @@ class UrunRepository {
     });
   }
 
-  // Ürün Güncelle (COALESCE: Eğer yeni resim yoksa eski resmi korur)
+  // Ürün Güncelle
   update(id, urun) {
     return new Promise((resolve, reject) => {
       const query =

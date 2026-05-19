@@ -31,33 +31,310 @@
         color: var(--white);
         box-shadow: 0 4px 10px rgba(133, 91, 101, 0.2);
       }
+      .stat-card {
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      }
+      .log-table th {
+        background-color: #fcf8f9;
+      }
+      .log-table tr:hover {
+        background-color: #fafafa;
+      }
+
+      /* Akıllı Yüzen Geri Dönüş Butonu Stili */
+      #btn-geri {
+        display: flex;
+        align-items: center;
+        flex: none;
+        width: auto;
+        padding: 12px 30px;
+        position: fixed;
+        bottom: 40px;
+        right: 40px;
+        z-index: 999;
+        box-shadow: 0 8px 25px rgba(216, 149, 155, 0.5);
+        border-radius: 50px;
+        font-size: 16px;
+        opacity: 0.85;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      }
+      #btn-geri:hover {
+        opacity: 1;
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(216, 149, 155, 0.8);
+      }
+
+      /* El Sallama Animasyonu */
+      @keyframes wave-hand {
+        0% {
+          transform: rotate(0deg);
+        }
+        10% {
+          transform: rotate(14deg);
+        }
+        20% {
+          transform: rotate(-8deg);
+        }
+        30% {
+          transform: rotate(14deg);
+        }
+        40% {
+          transform: rotate(-4deg);
+        }
+        50% {
+          transform: rotate(10deg);
+        }
+        60% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(0deg);
+        }
+      }
+      .waving-icon {
+        animation: wave-hand 2.2s infinite;
+        transform-origin: 70% 70%;
+        display: inline-block;
+      }
+
+      /* Çıkış Modalı Butonlarının Canlı Hover Efektleri */
+      .btn-logout-modal-cancel {
+        flex: 1;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-radius: 18px;
+        border: 1.5px solid #ebdcd5;
+        background: transparent;
+        color: #5a3e36;
+        font-weight: 700;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+      .btn-logout-modal-cancel:hover {
+        background-color: #fff1eb;
+        border-color: #7a625a;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 12px rgba(90, 62, 54, 0.1);
+      }
+      .btn-logout-modal-cancel:active {
+        transform: translateY(1px);
+      }
+
+      .btn-logout-modal-confirm {
+        flex: 1;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-radius: 18px;
+        border: none;
+        background-color: var(--mauve);
+        color: white;
+        font-weight: 700;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 6px 15px rgba(133, 91, 101, 0.25);
+      }
+      .btn-logout-modal-confirm:hover {
+        background-color: #b35662;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(133, 91, 101, 0.4);
+      }
+      .btn-logout-modal-confirm:active {
+        transform: translateY(1px);
+      }
+
+      #ad {
+        text-transform: uppercase;
+      }
+
+      /* ÜRÜN GÖRSELLERİNİ KATMANSIZ YAPAN SİHİRLİ DOKUNUŞ */
+      .product-img-wrapper {
+        background-color: transparent !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        padding: 10px;
+      }
+
+      .product-img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain !important;
+        mix-blend-mode: multiply;
+        filter: drop-shadow(0 8px 12px rgba(90, 62, 54, 0.08));
+        transition: transform 0.3s ease;
+      }
+
+      .product-card:hover .product-img-wrapper img {
+        transform: scale(1.04);
+      }
+
+      /* SİDEBAR GENEL STİLLERİ */
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+        background-color: var(--white);
+      }
+
+      /* 🌸 SİHİRLİ LOGO BÜYÜTME İŞLEMİ 🌸 */
+      .sidebar-brand-logo {
+        width: 100%;
+        /* Kutunun kapladığı alanı küçük tutuyoruz ki diğer menüleri aşağı itmesin */
+        max-width: 160px;
+        height: auto;
+        display: block;
+        margin: 15px auto 5px auto;
+        filter: drop-shadow(0 4px 8px rgba(90, 62, 54, 0.08));
+        /* İŞTE SİHİR BURADA: Kutuyu büyütmeden resmi %35 oranında tam kırmızı çizgilere kadar büyütüyoruz! */
+        transform: scale(1.35);
+        transform-origin: center center;
+        transition: transform 0.3s ease;
+      }
+      .sidebar-brand-logo:hover {
+        transform: scale(1.38); /* Üzerine gelince biraz daha büyür */
+      }
+
+      /* Scroll Bar SİLİNDİ - Menü alanı temiz bırakıldı */
+      .sidebar-menu-wrapper {
+        flex: 1;
+        padding-bottom: 10px;
+      }
+
+      /* SIFIRA SIFIR DİBE YAPIŞAN MOTİVASYON KUTUSU */
+      .sidebar-sweet-promo {
+        flex-shrink: 0;
+        width: 100%;
+        padding: 20px 15px 5px 15px;
+        background-color: #fff6f6;
+        border-top: 3px solid #d6727e;
+        border-radius: 0;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        transition: background-color 0.3s ease;
+        margin-top: auto;
+      }
+
+      .sidebar-sweet-promo:hover {
+        background-color: #ffeaea;
+      }
+
+      .promo-text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #7a625a;
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1.4;
+        z-index: 2;
+        margin-bottom: 0;
+      }
+
+      /* Uçuşan Kalpler ve Yapraklar */
+      .promo-h-1 {
+        position: absolute;
+        top: 12px;
+        right: 18px;
+        color: #f4b2a6;
+        font-size: 18px;
+        transform: rotate(15deg);
+        opacity: 0.9;
+      }
+      .promo-h-2 {
+        position: absolute;
+        bottom: 22px;
+        right: 48px;
+        color: #f4b2a6;
+        font-size: 12px;
+        transform: rotate(-10deg);
+        opacity: 0.8;
+      }
+      .promo-h-3 {
+        position: absolute;
+        bottom: 32px;
+        right: 35px;
+        color: #f4b2a6;
+        font-size: 10px;
+        transform: rotate(20deg);
+        opacity: 0.7;
+      }
+      .promo-leaf {
+        position: absolute;
+        bottom: -5px;
+        right: -5px;
+        color: #e6c5bf;
+        font-size: 35px;
+        transform: rotate(-25deg);
+        opacity: 0.3;
+      }
     </style>
   </head>
   <body>
     <aside class="sidebar">
-      <div class="logo-container">
-        <div class="logo">🍰 Melike & Elif</div>
+      <div
+        class="logo-container"
+        style="padding: 0; flex-shrink: 0; margin-bottom: 25px"
+      >
+        <img
+          src="logo.png"
+          alt="Melike & Elif Kardeşlikten Doğan Lezzetler"
+          class="sidebar-brand-logo"
+        />
       </div>
 
-      <div class="menu-group-title">Yönetim Paneli</div>
-      <div class="menu-item active" data-target="ozet-sayfasi">
-        <i class="fas fa-chart-pie"></i> Özet Panel
-      </div>
-      <div class="menu-item" id="menu-yiyecek" data-target="liste-sayfasi">
-        <i class="fas fa-utensils"></i> Yiyecek Menüsü
-      </div>
-      <div class="menu-item" id="menu-icecek" data-target="liste-sayfasi">
-        <i class="fas fa-mug-hot"></i> İçecek Menüsü
+      <div class="sidebar-menu-wrapper">
+        <div class="menu-group-title">Yönetim Paneli</div>
+        <div class="menu-item" id="menu-ozet" data-target="ozet-sayfasi">
+          <i class="fas fa-chart-pie"></i> Özet Panel
+        </div>
+        <div class="menu-item" id="menu-yiyecek" data-target="liste-sayfasi">
+          <i class="fas fa-utensils"></i> Yiyecek Menüsü
+        </div>
+        <div class="menu-item" id="menu-icecek" data-target="liste-sayfasi">
+          <i class="fas fa-mug-hot"></i> İçecek Menüsü
+        </div>
+
+        <div class="menu-group-title">İşlemler</div>
+        <div class="menu-item" data-target="ekle-sayfasi">
+          <i class="fas fa-plus-circle"></i> Yeni Lezzet Ekle
+        </div>
+
+        <div class="menu-group-title">Hesap</div>
+        <div class="menu-item" data-target="ayarlar-sayfasi">
+          <i class="fas fa-cog"></i> Ayarlar
+        </div>
       </div>
 
-      <div class="menu-group-title">İşlemler</div>
-      <div class="menu-item" data-target="ekle-sayfasi">
-        <i class="fas fa-plus-circle"></i> Yeni Lezzet Ekle
-      </div>
-
-      <div class="menu-group-title">Hesap</div>
-      <div class="menu-item" data-target="ayarlar-sayfasi">
-        <i class="fas fa-cog"></i> Ayarlar
+      <div class="sidebar-sweet-promo">
+        <div class="promo-text">
+          <span>Tatlı bir gün,</span>
+          <span>tatlı işler getirir.</span>
+        </div>
+        <i class="far fa-heart promo-h-1"></i>
+        <i class="fas fa-heart promo-h-2"></i>
+        <i class="fas fa-heart promo-h-3"></i>
+        <i class="fas fa-seedling promo-leaf"></i>
       </div>
     </aside>
 
@@ -71,7 +348,7 @@
 
           Hoş geldin,
           <span id="lbl-aktif-user" style="font-weight: 700; margin-left: 3px"
-            >Elif</span
+            >Kullanıcı</span
           >
 
           <button id="btn-logout">
@@ -81,7 +358,7 @@
       </header>
 
       <div class="content-container">
-        <section id="ozet-sayfasi" class="page-section active">
+        <section id="ozet-sayfasi" class="page-section">
           <div class="welcome-banner">
             <div class="banner-content">
               <h3>Harika Lezzetler Yaratma Vakti!</h3>
@@ -155,18 +432,9 @@
             <h2 class="page-title" id="liste-baslik" style="margin-bottom: 0">
               <i class="fas fa-layer-group"></i> Menüdeki Tüm Lezzetler
             </h2>
-            <button
-              id="btn-geri"
-              class="btn-confirm"
-              style="
-                display: none;
-                flex: none;
-                width: auto;
-                padding: 10px 25px;
-                box-shadow: 0 4px 10px rgba(216, 149, 155, 0.3);
-              "
-            >
-              <i class="fas fa-arrow-left" style="margin-right: 5px"></i> Tümüne
+
+            <button id="btn-geri" class="btn-confirm">
+              <i class="fas fa-arrow-left" style="margin-right: 8px"></i> Özete
               Dön
             </button>
           </div>
@@ -185,7 +453,11 @@
             <i class="fas fa-plus-circle"></i> Yeni Lezzet Ekle
           </h2>
           <div class="form-card">
-            <form id="urun-form" enctype="multipart/form-data">
+            <form
+              id="urun-form"
+              enctype="multipart/form-data"
+              autocomplete="off"
+            >
               <input type="hidden" id="urun-id" />
               <div class="form-grid">
                 <div class="form-group full">
@@ -215,6 +487,8 @@
                     class="form-control"
                     required
                     placeholder="Örn: Çilekli Magnolia"
+                    autocomplete="off"
+                    oninput="this.value = this.value.toLocaleUpperCase('tr-TR')"
                   />
                 </div>
 
@@ -227,15 +501,28 @@
                     required
                   >
                     <option value="">Seçiniz...</option>
-                    <optgroup label="☕ İÇECEKLER">
-                      <option value="Sıcak Kahveler">Sıcak Kahveler</option>
-                      <option value="Soğuk Kahveler">Soğuk Kahveler</option>
-                      <option value="Çaylar">Çaylar</option>
-                      <option value="Soğuk İçecekler">Soğuk İçecekler</option>
-                      <option value="Gazlı İçecekler">Gazlı İçecekler</option>
-                      <option value="Şişe / Hazır İçecekler">
-                        Şişe / Hazır İçecekler
-                      </option>
+                    <optgroup label="🍃 ÇAYLAR">
+                      <option value="Siyah Çay">Siyah Çay</option>
+                      <option value="Yeşil Çay">Yeşil Çay</option>
+                      <option value="Bitki Çayları">Bitki Çayları</option>
+                    </optgroup>
+                    <optgroup label="☕ KAHVELER">
+                      <option value="Çekirdek Kahve">Çekirdek Kahve</option>
+                      <option value="Öğütülmüş Kahve">Öğütülmüş Kahve</option>
+                      <option value="Granül Kahve">Granül Kahve</option>
+                      <option value="Kapsül Kahve">Kapsül Kahve</option>
+                    </optgroup>
+                    <optgroup label="🥤 GAZLI İÇECEKLER">
+                      <option value="Kola">Kola</option>
+                      <option value="Soda">Soda</option>
+                      <option value="Fanta">Fanta</option>
+                      <option value="Gazoz">Gazoz</option>
+                    </optgroup>
+                    <optgroup label="💧 SU ÜRÜNLERİ">
+                      <option value="Küçük Su">Küçük Su</option>
+                      <option value="Büyük Su">Büyük Su</option>
+                      <option value="Cam Şişe Su">Cam Şişe Su</option>
+                      <option value="Pet Şişe Su">Pet Şişe Su</option>
                     </optgroup>
                     <optgroup label="🍰 TATLILAR">
                       <option value="Pasta">Pasta</option>
@@ -259,12 +546,6 @@
                       <option value="Poğaça & Açma">Poğaça & Açma</option>
                       <option value="Sandviçler">Sandviçler</option>
                     </optgroup>
-                    <optgroup label="🌱 ÖZEL ÜRÜNLER">
-                      <option value="Vegan">Vegan</option>
-                      <option value="Glutensiz">Glutensiz</option>
-                      <option value="Şekersiz">Şekersiz</option>
-                      <option value="Protein Ürünleri">Protein Ürünleri</option>
-                    </optgroup>
                   </select>
                 </div>
 
@@ -279,6 +560,7 @@
                     min="0"
                     required
                     placeholder="0.00"
+                    autocomplete="off"
                   />
                 </div>
 
@@ -333,33 +615,107 @@
           <h2 class="page-title">
             <i class="fas fa-cog"></i> Profil ve Ayarlar
           </h2>
-          <div class="form-card">
-            <form id="ayarlar-form">
+
+          <div class="form-card" style="margin-bottom: 30px">
+            <form id="ayarlar-form" autocomplete="off">
               <div class="form-grid">
                 <div class="form-group full">
-                  <label class="form-label">E-posta Adresi</label>
+                  <label class="form-label"
+                    >E-posta Adresi (Değiştirilemez)</label
+                  >
                   <input
                     type="email"
+                    id="ayar-email"
                     class="form-control"
-                    value="elif@pastane.com"
-                    required
+                    disabled
+                    style="
+                      background-color: #f1f1f1;
+                      color: #888;
+                      cursor: not-allowed;
+                      font-weight: 600;
+                    "
+                    placeholder="E-posta yükleniyor..."
                   />
                 </div>
                 <div class="form-group full">
                   <label class="form-label">Yeni Şifre</label>
                   <input
                     type="password"
+                    id="ayar-sifre"
                     class="form-control"
-                    placeholder="Değiştirmek istemiyorsanız boş bırakın"
+                    required
+                    placeholder="Hesabınız için yeni bir şifre belirleyin"
+                    autocomplete="new-password"
                   />
                 </div>
                 <div class="form-group full">
-                  <button type="submit" class="btn-submit">
-                    <i class="fas fa-check-circle"></i> Bilgilerimi Güncelle
+                  <button
+                    type="submit"
+                    id="btn-sifre-kaydet"
+                    class="btn-submit"
+                  >
+                    <i class="fas fa-check-circle"></i> Şifremi Güncelle
                   </button>
                 </div>
               </div>
             </form>
+          </div>
+
+          <h2 class="page-title" style="margin-top: 40px; font-size: 20px">
+            <i class="fas fa-history"></i> Sistem Giriş Geçmişi
+          </h2>
+          <div
+            class="table-container"
+            style="
+              background: white;
+              border-radius: 12px;
+              padding: 20px;
+              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+              overflow-x: auto;
+            "
+          >
+            <table
+              class="log-table"
+              style="
+                width: 100%;
+                border-collapse: collapse;
+                text-align: left;
+                font-size: 15px;
+              "
+            >
+              <thead>
+                <tr style="border-bottom: 2px solid var(--peony)">
+                  <th
+                    style="
+                      padding: 15px;
+                      color: var(--mauve);
+                      border-radius: 8px 0 0 0;
+                    "
+                  >
+                    Tarih & Saat
+                  </th>
+                  <th style="padding: 15px; color: var(--mauve)">
+                    Kullanıcı Adı
+                  </th>
+                  <th
+                    style="
+                      padding: 15px;
+                      color: var(--mauve);
+                      border-radius: 0 8px 0 0;
+                    "
+                  >
+                    E-posta Adresi
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="log-tablosu-body">
+                <tr>
+                  <td colspan="3" style="text-align: center; padding: 20px">
+                    Kayıtlar yükleniyor...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </section>
       </div>
@@ -410,32 +766,101 @@
       </div>
     </div>
 
-    <div id="logout-modal" class="custom-modal">
+    <div
+      id="logout-modal"
+      class="custom-modal"
+      style="background: rgba(90, 62, 54, 0.35)"
+    >
       <div
         class="modal-box"
-        style="text-align: center; border-top: 5px solid var(--mauve)"
+        style="
+          text-align: center;
+          border-radius: 28px;
+          background: #fffaf7;
+          padding: 35px 25px;
+          width: 480px;
+          max-width: 90%;
+          box-shadow: 0 15px 40px rgba(90, 62, 54, 0.15);
+          border: none;
+          position: relative;
+        "
       >
-        <i
-          class="fas fa-sign-out-alt"
-          style="color: var(--mauve); font-size: 50px; margin-bottom: 15px"
-        ></i>
-        <h3 style="color: var(--mauve); margin-bottom: 10px">
-          Çıkış Yapmak Üzeresiniz
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            margin-top: 10px;
+          "
+        >
+          <i
+            class="fas fa-hands-wave waving-icon"
+            style="font-size: 48px; color: #d6727e"
+          ></i>
+        </div>
+
+        <h3
+          style="
+            color: #5a3e36;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+          "
+        >
+          <span style="color: #d6727e; font-size: 18px">♥</span> Güzel bir gün
+          oldu! <span style="color: #d6727e; font-size: 18px">♥</span>
         </h3>
-        <p style="margin-bottom: 20px">
-          Panelden güvenli bir şekilde çıkış yapmak istediğinize emin misiniz?
+
+        <p
+          style="
+            color: #7a625a;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            padding: 0 15px;
+          "
+        >
+          Kafenizi kapatmadan önce hesabınızdan<br />çıkmak istediğinize emin
+          misiniz?
         </p>
-        <div class="modal-actions" style="justify-content: center; gap: 15px">
-          <button id="btn-cancel-logout" class="btn-cancel" style="flex: 1">
+
+        <div
+          class="modal-actions"
+          style="
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            padding: 0 10px;
+          "
+        >
+          <button id="btn-cancel-logout" class="btn-logout-modal-cancel">
+            <i
+              class="fas fa-coffee"
+              style="color: #8a685d; font-size: 16px"
+            ></i>
             Vazgeç
           </button>
-          <button
-            id="btn-confirm-logout"
-            class="btn-submit"
-            style="flex: 1; background-color: var(--mauve)"
-          >
-            Evet, Çıkış Yap
+
+          <button id="btn-confirm-logout" class="btn-logout-modal-confirm">
+            <i class="fas fa-leaf" style="font-size: 14px"></i> Evet, Çıkış Yap
           </button>
+        </div>
+
+        <div
+          style="
+            font-size: 14px;
+            color: #ba9e94;
+            font-style: italic;
+            font-family: &quot;Georgia&quot;, serif;
+            margin-top: 10px;
+          "
+        >
+          Yarın görüşmek üzere! ♡
         </div>
       </div>
     </div>
@@ -444,19 +869,20 @@
     <script src="js/utils/notification.js"></script>
     <script src="js/views/urunlerView.js"></script>
     <script src="js/app.js"></script>
-    <script>
-      const menuItems = document.querySelectorAll(".menu-item");
-      const pageSections = document.querySelectorAll(".page-section");
 
-      menuItems.forEach((item) => {
-        item.addEventListener("click", function () {
-          menuItems.forEach((m) => m.classList.remove("active"));
-          this.classList.add("active");
-          pageSections.forEach((page) => page.classList.remove("active"));
-          const targetId = this.getAttribute("data-target");
-          document.getElementById(targetId).classList.add("active");
-        });
-      });
+    <script>
+      // Kapı Güvenliği Kontrolü
+      const userToken = localStorage.getItem("token");
+      if (!userToken) {
+        window.location.href = "login.html";
+      }
+
+      // Dinamik İsim Yazdırma
+      const lblKullanici = document.getElementById("lbl-aktif-user");
+      const aktifIsim = localStorage.getItem("aktifKullaniciAdi");
+      if (aktifIsim) {
+        lblKullanici.innerText = aktifIsim;
+      }
     </script>
   </body>
 </html>

@@ -1,37 +1,34 @@
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 
-// Veritabanı dosyasının tam yolu (backend/pastane.sqlite)
+// YOL DÜZELTİLDİ: ../pastane.sqlite (Doğrudan backend klasörünün dışındaki asıl dosyaya bakar)
 const dbPath = path.resolve(__dirname, "../pastane.sqlite");
 
 const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
-    console.error("Veritabanı bağlantı hatası:", err.message);
+    console.error("Veritabanına bağlanılamadı:", err.message);
   } else {
-    console.log("SQLite Veritabanına başarıyla bağlanıldı.");
+    console.log("SQLite veritabanına başarıyla bağlanıldı.");
 
-    // TABLO OLUŞTURMA: Sunucu her açıldığında bu kontrolü otomatik yapar
-    db.run(
-      `
-      CREATE TABLE IF NOT EXISTS kullanicilar (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        ad_soyad TEXT NOT NULL,
-        email TEXT NOT NULL UNIQUE,
-        sifre TEXT NOT NULL,
-        olusturulma_tarihi TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `,
-      (tableErr) => {
-        if (tableErr) {
-          console.error(
-            "Kullanıcılar tablosu oluşturulamadı:",
-            tableErr.message,
-          );
-        } else {
-          console.log("Kullanıcılar tablosu hazır.");
-        }
-      },
-    );
+    const createLogsTable = `
+            CREATE TABLE IF NOT EXISTS giris_kayitlari (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                ad_soyad TEXT NOT NULL,
+                email TEXT NOT NULL,
+                giris_tarihi DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        `;
+
+    db.run(createLogsTable, (err) => {
+      if (err) {
+        console.error(
+          "Giriş kayıtları tablosu oluşturulurken hata:",
+          err.message,
+        );
+      } else {
+        console.log("Giriş kayıtları (Audit Log) tablosu hazır.");
+      }
+    });
   }
 });
 
