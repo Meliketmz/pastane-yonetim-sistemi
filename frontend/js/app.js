@@ -96,7 +96,26 @@ const app = {
             '<tr><td colspan="3" style="text-align: center; padding: 20px;">Henüz giriş kaydı bulunmuyor.</td></tr>';
         } else {
           loglar.forEach((log) => {
-            const tarih = new Date(log.giris_tarihi).toLocaleString("tr-TR");
+            // 🌸 DÜZELTİLDİ: Düz metin tarih verisini ISO UTC formatına çeviriyoruz ki +3 saat farkı tam eklensin 🌸
+            let utcZamani = log.giris_tarihi;
+            if (
+              utcZamani &&
+              !utcZamani.includes("Z") &&
+              !utcZamani.includes("T")
+            ) {
+              utcZamani = utcZamani.replace(" ", "T") + "Z";
+            }
+
+            // 🌸 DÜZELTİLDİ: Saniyeleri kaldırıp tam istediğin gibi ikili grup (Saat:Dakika) formatı yaptık 🌸
+            const tarih = new Date(utcZamani).toLocaleString("tr-TR", {
+              timeZone: "Europe/Istanbul",
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+
             tbody.innerHTML += `
                        <tr style="border-bottom: 1px solid #eee;">
                            <td style="padding: 12px; font-weight: 500; color: #555;">${tarih}</td>
@@ -284,10 +303,8 @@ const app = {
         const id = document.getElementById("urun-id").value;
         const urunAdi = document.getElementById("ad").value.trim();
 
-        // 🌟 DÜZELTİLDİ: Seçilen kategoriyi form sıfırlanmadan en başta hafızaya alıyoruz
         const secilenKategori = document.getElementById("kategori").value;
 
-        // İçecek kategorilerinin tam listesi
         const icecekKategorileri = [
           "Siyah Çay",
           "Yeşil Çay",
@@ -306,7 +323,6 @@ const app = {
           "Pet Şişe Su",
         ];
 
-        // 🌟 DÜZELTİLDİ: Ürünün yiyecek mi içecek mi olduğunun akıllı ayrımı
         const isIcecek = icecekKategorileri.includes(secilenKategori);
         const urunTuruMetni = isIcecek ? "içecek" : "lezzet";
 
@@ -331,14 +347,12 @@ const app = {
         } else {
           await apiService.urunEkle(formData);
           if (successModal && successMessage) {
-            // 🌟 DÜZELTİLDİ: Mesaj artık dinamik ("taptaze içecek" veya "taptaze lezzet")
             successMessage.innerText = `"${urunAdi}" isimli taptaze ${urunTuruMetni} başarıyla menüye eklendi!`;
             successModal.classList.add("active");
             btnSuccessOk.onclick = () => {
               successModal.classList.remove("active");
               urunlerView.formuTemizle();
 
-              // 🌟 DÜZELTİLDİ: İçecek eklenince doğrudan İçecek Menüsüne fırlatır
               if (isIcecek) {
                 this.sayfaGoster("liste-sayfasi", "icecek");
               } else {
